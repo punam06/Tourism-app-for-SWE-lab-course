@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangladesh Tourism Explorer - Destination Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.min.css" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <span class="ambient ambient-one"></span>
+    <span class="ambient ambient-two"></span>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">BD</div>
+        <div>
+          <strong>Bangladesh Tourism</strong>
+          <small>Destination Details</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#discover">Destinations</a>
+        <a href="index.html#categoryBar">Categories</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+      <a class="nav-cta" href="index.html">Back to Home</a>
+    </header>
+
+    <main id="destDetailMain">
+      <!-- Destination Hero Section -->
+      <section class="dest-detail-hero">
+        <div class="dest-hero-visual" id="destHeroVisual"></div>
+        <article class="dest-hero-info">
+          <div class="dest-hero-badge" id="destHeroBadge">Category</div>
+          <h1 id="destHeroName">Loading...</h1>
+          <p id="destHeroDistrict" class="dest-hero-meta">District: --</p>
+          <p id="destHeroDescription">Loading destination information...</p>
+          
+          <div class="dest-hero-stats">
+            <div>
+              <strong id="destHeroIndex">--</strong>
+              <span>In Database</span>
+            </div>
+            <div>
+              <strong id="destHeroCategory">--</strong>
+              <span>Destination Type</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Weather Section -->
+      <section class="dest-page-section" id="weatherSection">
+        <header class="section-heading">
+          <h2>🌤️ Weather & Climate</h2>
+          <p>Current conditions and forecast for your trip</p>
+        </header>
+
+        <div class="dest-page-content">
+          <!-- Current Weather -->
+          <article class="weather-card" id="destCurrentWeather">
+            <div class="weather-top">
+              <div class="weather-icon" id="destCurrentIcon">🌤️</div>
+              <div class="weather-main">
+                <div id="destCurrentTemp">--°C</div>
+                <div id="destCurrentDesc">Loading...</div>
+              </div>
+            </div>
+            <div class="weather-suggestion" id="destCurrentSuggestion">Loading weather data...</div>
+          </article>
+
+          <!-- Trip Date Calendar & Forecast -->
+          <div id="destForecastContainer"></div>
+        </div>
+      </section>
+
+      <!-- Map Section -->
+      <section class="dest-page-section" id="mapSection">
+        <header class="section-heading">
+          <h2>🗺️ Location Map</h2>
+          <p>Find this destination on the map</p>
+        </header>
+        <div class="dest-page-content">
+          <div class="dest-map-shell">
+            <div class="dest-map-toolbar">
+              <div>
+                <span class="dest-map-label">Pinned location</span>
+                <strong id="destMapLocationName">Map Preview</strong>
+              </div>
+              <span class="dest-map-pill">Zoomed for travel planning</span>
+            </div>
+            <div id="destDetailMap" class="dest-detail-map-large"></div>
+            <p class="dest-map-note">Use + / - to zoom, or click the marker for the location preview. <a id="externalMapLink" href="#" target="_blank" style="color:#a9e8bb; text-decoration:underline; margin-left:10px;">Open in Google Maps</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Travel Guide Section -->
+      <section class="dest-page-section" id="guideSection">
+        <header class="section-heading">
+          <h2>🧭 Travel Guide</h2>
+          <p>Essential information and tips for your visit</p>
+        </header>
+        <div class="dest-page-content">
+          <div id="destGuideContent" class="dest-guide-content">
+            <p>Loading guide information...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Accommodations Section -->
+      <section class="dest-page-section" id="hotelSection">
+        <header class="section-heading">
+          <h2>🏨 Hotels & Accommodations</h2>
+          <p>Find places to stay near this destination</p>
+        </header>
+        <div class="dest-page-content">
+          <div id="destHotelsContent" class="dest-hotels-content">
+            <div class="hotel-placeholder">
+              <p>Popular accommodation options in this area:</p>
+              <ul id="hotelList">
+                <li>Searching for nearby hotels...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Booking Section -->
+      <section class="dest-page-section" id="bookingSection">
+        <header class="section-heading">
+          <h2>🎟️ Booking & Reservations</h2>
+          <p>Book your visit and arrange transportation</p>
+        </header>
+        <div class="dest-page-content">
+          <div class="booking-options">
+            <!-- Package Booking Card -->
+            <div class="booking-card" id="packageBookingCard">
+              <h3>📦 Book This Spot</h3>
+              <p>Confirm your visit with a package booking. Includes entry, basic guide, and local transport.</p>
+              <div id="bookingFormArea">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:15px;">
+                  <div>
+                    <label style="font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Travel Date</label>
+                    <input type="date" id="bookingDate" style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:var(--text); font-size:0.95rem;" />
+                  </div>
+                  <div>
+                    <label style="font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Number of Persons</label>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <button type="button" id="bookingPersonsMinus" class="button secondary" style="padding:8px 14px; font-size:1rem; min-width:auto;">−</button>
+                      <input type="number" id="bookingPersons" value="1" min="1" max="20" style="width:60px; text-align:center; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:var(--text); font-size:0.95rem;" />
+                      <button type="button" id="bookingPersonsPlus" class="button secondary" style="padding:8px 14px; font-size:1rem; min-width:auto;">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="bookingEstimate" style="margin-top:14px; padding:12px; border-radius:10px; background:rgba(169,232,187,0.08); border:1px solid rgba(169,232,187,0.15);">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted); font-size:0.9rem;">Estimated Total</span>
+                    <strong id="bookingPrice" style="color:#a9e8bb; font-size:1.2rem;">৳ 2,500</strong>
+                  </div>
+                  <div style="font-size:0.8rem; color:var(--muted); margin-top:4px;">Per person: <span id="bookingPricePerPerson">৳ 2,500</span></div>
+                </div>
+                <button type="button" id="confirmBookingBtn" class="button primary" style="width:100%; margin-top:14px; padding:14px; font-size:1rem; font-weight:600;">
+                  ✅ Confirm Booking
+                </button>
+                <div id="bookingMessage" style="margin-top:10px; text-align:center; font-size:0.9rem;"></div>
+                <p style="font-size:0.78rem; color:var(--muted); margin-top:10px; text-align:center;">
+                  Free cancellation up to 24 hours before your travel date.
+                </p>
+              </div>
+            </div>
+            <!-- External Links -->
+            <div class="booking-card">
+              <h3>🎫 Tickets & Transport</h3>
+              <p>Book event tickets and arrange transportation</p>
+              <div class="booking-buttons" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">
+                <a href="https://shohoz.com" target="_blank" rel="noopener noreferrer" class="button secondary" style="font-size:0.85rem; padding:8px 16px;">Shohoz</a>
+                <a href="https://gozayan.com" target="_blank" rel="noopener noreferrer" class="button secondary" style="font-size:0.85rem; padding:8px 16px;">GoZayan</a>
+                <a href="https://bdtickets.com" target="_blank" rel="noopener noreferrer" class="button secondary" style="font-size:0.85rem; padding:8px 16px;">bdtickets</a>
+                <a href="https://sharetrip.net" target="_blank" rel="noopener noreferrer" class="button secondary" style="font-size:0.85rem; padding:8px 16px;">ShareTrip</a>
+                <a href="https://jatri.co" target="_blank" rel="noopener noreferrer" class="button secondary" style="font-size:0.85rem; padding:8px 16px;">Jatri</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Destinations -->
+      <section class="dest-page-section" id="relatedSection">
+        <header class="section-heading">
+          <h2>🔗 Related Destinations</h2>
+          <p>Explore other nearby attractions</p>
+        </header>
+        <div class="dest-page-content">
+          <div class="related-grid" id="relatedDestinations">
+            <p>Loading related destinations...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Budget Calculator Section -->
+      <section class="dest-page-section" id="budgetSection">
+        <header class="section-heading">
+          <h2>💰 Trip Budget Calculator</h2>
+          <p>Estimate your travel costs based on the number of people and trip duration.</p>
+        </header>
+        <div class="dest-page-content">
+          <div class="budget-calculator-shell">
+            <div class="budget-input-row" style="margin-bottom:16px;">
+              <div class="budget-input-group">
+                <label for="budgetOriginDest">Your District</label>
+                <select id="budgetOriginDest" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--text);font-size:0.95rem;"><option value="">-- Select --</option><option value="Dhaka">Dhaka</option><option value="Chattogram">Chattogram</option><option value="Rajshahi">Rajshahi</option><option value="Khulna">Khulna</option><option value="Sylhet">Sylhet</option><option value="Rangamati">Rangamati</option><option value="Cox's Bazar">Cox's Bazar</option><option value="Bandarban">Bandarban</option><option value="Khagrachari">Khagrachari</option><option value="Cumilla">Cumilla</option><option value="Noakhali">Noakhali</option><option value="Patuakhali">Patuakhali</option><option value="Naogaon">Naogaon</option><option value="Narayanganj">Narayanganj</option><option value="Bagerhat">Bagerhat</option><option value="Sunamganj">Sunamganj</option><option value="Moulvibazar">Moulvibazar</option><option value="Dinajpur">Dinajpur</option><option value="Kushtia">Kushtia</option><option value="Pabna">Pabna</option><option value="Meherpur">Meherpur</option><option value="Madaripur">Madaripur</option></select>
+              </div>
+              <div class="budget-input-group">
+                <label for="budgetTransportMode">Transport Mode</label>
+                <select id="budgetTransportMode" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--text);font-size:0.95rem;"><option value="bus">Bus</option><option value="train">Train</option><option value="launch">Launch</option><option value="air">Air</option></select>
+              </div>
+            </div>
+            <div class="budget-input-row">
+              <div class="budget-input-group">
+                <label for="budgetPersons">Number of People</label>
+                <div class="budget-input-with-controls">
+                  <button type="button" class="budget-btn-minus" id="personMinus">−</button>
+                  <input 
+                    type="number" 
+                    id="budgetPersons" 
+                    min="1" 
+                    max="20" 
+                    value="1"
+                    aria-label="Number of people for trip"
+                  >
+                  <button type="button" class="budget-btn-plus" id="personPlus">+</button>
+                </div>
+              </div>
+
+              <div class="budget-input-group">
+                <label for="budgetDays">Trip Duration (Days)</label>
+                <div class="budget-input-with-controls">
+                  <button type="button" class="budget-btn-minus" id="daysMinus">−</button>
+                  <input 
+                    type="number" 
+                    id="budgetDays" 
+                    min="1" 
+                    max="30" 
+                    value="3"
+                    aria-label="Trip duration in days"
+                  >
+                  <button type="button" class="budget-btn-plus" id="daysPlus">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="budget-breakdown">
+              <div class="budget-item">
+                <div class="budget-item-label">
+                  <span>🚌 Travel Cost</span>
+                  <small>(round-trip per person)</small>
+                </div>
+                <div class="budget-item-value" id="budgetTravelCost">Select your district</div>
+              </div>
+              <div class="budget-item">
+                <div class="budget-item-label">
+                  <span>🏨 Accommodation</span>
+                  <small>(per night per person)</small>
+                </div>
+                <div class="budget-item-value" id="budgetAccommodation">৳ 2,500</div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-item-label">
+                  <span>🍽️ Food & Dining</span>
+                  <small>(per day per person)</small>
+                </div>
+                <div class="budget-item-value" id="budgetFood">৳ 800</div>
+              </div>
+
+              <div class="budget-item">
+                <div class="budget-item-label">
+                  <span>🚗 Local Transport & Activities</span>
+                  <small>(per day per person)</small>
+                </div>
+                <div class="budget-item-value" id="budgetLocalTransport">৳ 600</div>
+              </div>
+
+              <div class="budget-total-section">
+                <div class="budget-summary-row" id="budgetRouteInfo" style="font-size:0.85rem;color:var(--muted);"></div>
+                <div class="budget-summary-row">
+                  <span>Daily cost per person</span>
+                  <strong id="budgetPerPersonPerDay">৳ 3,900</strong>
+                </div>
+                <div class="budget-summary-row">
+                  <span>Total for all people, all days</span>
+                  <strong id="budgetTotal" style="font-size: 1.3rem; color: #a9e8bb;">৳ 11,700</strong>
+                </div>
+              </div>
+
+              <p class="budget-note">💡 Tip: Budget varies by season and accommodation type. Beach and nature destinations typically cost less than hill stations.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews Section -->
+      <section class="dest-page-section" id="reviewSection">
+        <header class="section-heading">
+          <h2>⭐ Leave a Review</h2>
+          <p>Share your travel experience with others. Help fellow travelers plan their trips.</p>
+        </header>
+        <div class="dest-page-content">
+          <div class="review-form-shell">
+            <div class="review-rating-picker">
+              <label>How was your experience?</label>
+              <div class="star-rating" id="starRating">
+                <button type="button" class="star" data-rating="1" aria-label="1 star">★</button>
+                <button type="button" class="star" data-rating="2" aria-label="2 stars">★</button>
+                <button type="button" class="star" data-rating="3" aria-label="3 stars">★</button>
+                <button type="button" class="star" data-rating="4" aria-label="4 stars">★</button>
+                <button type="button" class="star" data-rating="5" aria-label="5 stars">★</button>
+              </div>
+              <span class="rating-text" id="ratingText">Select a rating</span>
+            </div>
+
+            <div class="review-text-area">
+              <label for="reviewTextarea">Your Review</label>
+              <textarea 
+                id="reviewTextarea" 
+                placeholder="Share your experience, tips, and recommendations for this destination..."
+                rows="6"
+              ></textarea>
+              <p class="review-hint">You can draft your review here. Sign in to publish it.</p>
+            </div>
+
+            <div class="review-actions">
+              <button type="button" class="button primary" id="submitReviewBtn">Submit Review</button>
+              <button type="button" class="button secondary" id="clearReviewBtn">Clear</button>
+            </div>
+
+            <div class="review-list-shell">
+              <h3>Published Reviews</h3>
+              <div id="reviewList" class="review-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Home CTA -->
+      <section class="dest-page-cta">
+        <h2>Ready to explore more?</h2>
+        <p>Discover 100+ other amazing destinations across Bangladesh</p>
+        <a href="index.html" class="button primary">Back to Home</a>
+        <a href="index.html#discover" class="button secondary">All Destinations</a>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/leaflet.markercluster.min.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8aCnXAxDmrcw_nDP8kwa15qS7Yrv_QII&callback=onGoogleMapsApiLoaded"></script>
+  <script src="script.js"></script>
+  <script src="destination.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
+ 
