@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangladesh Tourism Explorer</title>
+
+  <script>
+    if (window.location.port === '5501') {
+      window.location.replace('http://127.0.0.1:3000/');
+    }
+  </script>
+  <script>
+    window.onGoogleMapsApiLoaded = window.onGoogleMapsApiLoaded || function () {};
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <span class="ambient ambient-one"></span>
+    <span class="ambient ambient-two"></span>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">BD</div>
+        <div>
+          <strong>Bangladesh Tourism</strong>
+          <small>Search and explore 100+ attractions</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#home">Home</a>
+        <a href="#discover">Destinations</a>
+        <a href="#categoryBar">Categories</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="topbar-actions">
+        <a class="nav-cta" href="#discover">Explore Now</a>
+        <button class="nav-cta nav-secondary" type="button" id="authOpenBtn">Login / Sign up</button>
+        <button class="user-pill" type="button" id="accountButton" hidden>Account</button>
+        <button class="nav-cta nav-secondary" type="button" id="logoutBtn" hidden>Logout</button>
+      </div>
+    </header>
+    <!-- Category bar inserted below header for quick access -->
+    <div class="category-bar" id="categoryBar" aria-label="Destination categories"></div>
+
+    <main id="home">
+      <section class="section division-section" id="divisionExplorer">
+        <header class="section-heading">
+          <h2>Explore By Division</h2>
+          <p>Browse destinations from all 8 divisions of Bangladesh and filter the whole page by one division.</p>
+        </header>
+        <div class="division-search-row">
+          <input id="divisionSearch" type="text" placeholder="Search divisions..." aria-label="Search divisions">
+        </div>
+        <div class="division-grid" id="divisionGrid"></div>
+      </section>
+
+      <section class="hero">
+        <article class="hero-copy">
+          <p class="eyebrow">Bangladesh Explorer</p>
+          <h1>Never Stop Exploring The World</h1>
+          <p class="hero-text">
+            Search any place name or district and instantly get matching tourist spots. Filter by category, view a featured destination, and browse top picks from all over Bangladesh.
+          </p>
+
+          <div class="search-panel">
+            <label class="search-label" for="search">Search Place Or District</label>
+            <div class="search-row">
+              <input id="search" type="text" placeholder="Try Cox's Bazar, Sundarbans, Rangamati..." oninput="render()">
+              <button type="button" onclick="render()">Search</button>
+            </div>
+            <p class="search-hint" id="stats">Loading places...</p>
+            <div class="filter-grid">
+              <select id="budgetFilter" onchange="render()">
+                <option value="All">All Budgets</option>
+                <option value="low">Low Budget</option>
+                <option value="mid">Mid Budget</option>
+                <option value="high">High Budget</option>
+              </select>
+              <select id="roadFilter" onchange="render()">
+                <option value="All">All Road Types</option>
+                <option value="easy">Easy Going Roads</option>
+                <option value="moderate">Moderate Roads</option>
+                <option value="challenging">Challenging Roads</option>
+              </select>
+              <select id="opportunityFilter" onchange="render()">
+                <option value="All">All Opportunities</option>
+                <option value="leisure">Leisure</option>
+                <option value="culture">Culture</option>
+                <option value="adventure">Adventure</option>
+                <option value="eco">Eco Travel</option>
+                <option value="wildlife">Wildlife</option>
+                <option value="family">Family Trips</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="hero-stats">
+            <div>
+              <strong id="totalPlaces">0+</strong>
+              <span>Tourist Places</span>
+            </div>
+            <div>
+              <strong id="totalDistricts">0+</strong>
+              <span>District Coverage</span>
+            </div>
+            <div>
+              <strong id="activeCategory">All</strong>
+              <span>Active Filter</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="hero-panel">
+          <article class="hero-card" id="featuredCard">
+            <span class="hero-tag" id="featuredTag">Featured</span>
+            <h2 id="featuredName">Loading...</h2>
+            <p id="featuredDistrict">Loading district...</p>
+            <div class="hero-card-footer">
+              <span id="featuredMeta">Category</span>
+              <a href="#" id="featuredDetailsLink">See Details</a>
+            </div>
+          </article>
+
+          <!-- category chips moved to top category bar -->
+        </aside>
+      </section>
+
+      <section class="section" id="discover">
+        <header class="section-heading">
+          <h2>Top Destinations</h2>
+          <p>
+            Pick any card or marker on the map to preview that destination in the feature panel. Search and category filters are applied everywhere so your visitors can quickly find the right place.
+          </p>
+        </header>
+        <div class="map-container">
+          <div id="tourismMap" class="tourism-map"></div>
+          <div class="map-legend">
+            <span class="legend-item"><span class="legend-dot nature"></span> Nature</span>
+            <span class="legend-item"><span class="legend-dot beach"></span> Beach</span>
+            <span class="legend-item"><span class="legend-dot history"></span> History</span>
+            <span class="legend-item"><span class="legend-dot religious"></span> Religious</span>
+            <span class="legend-item"><span class="legend-dot culture"></span> Culture</span>
+            <span class="legend-item"><span class="legend-dot other"></span> Other</span>
+          </div>
+          <p class="map-help-text">Tip: click any marker to open a quick preview, or select a destination card to move the map there automatically.</p>
+        </div>
+        <div class="popular-grid" id="popularGrid"></div>
+      </section>
+
+      <section class="section result-section" id="route">
+        <header class="section-heading">
+          <h2>Excursion Route</h2>
+          <p>
+            This section highlights one selected destination with useful details based on your current search and category.
+          </p>
+        </header>
+
+        <article class="result-card" id="resultCard">
+          <div class="result-visual" id="resultVisual"></div>
+          <div class="result-copy">
+            <h3 id="resultName">Destination Name</h3>
+            <p id="resultDesc">Destination description will appear here.</p>
+
+            <div class="detail-list">
+              <div><strong>District</strong><span id="resultDistrict">-</span></div>
+              <div><strong>Category</strong><span id="resultCategory">-</span></div>
+              <div><strong>Budget</strong><span id="resultBudgetPill">-</span></div>
+            </div>
+
+            <div class="budget-panel" id="budgetSection">
+              <div class="budget-panel-head">
+                <div><h4>Budget Calculator</h4><p>Estimate trip, hotel, and guide costs.</p></div>
+                <span class="budget-pill" id="budgetBadge">Ready</span>
+              </div>
+              <div class="budget-grid">
+                <label>Your District
+                  <select id="budgetOrigin">
+                    <option value="">-- Select --</option>
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Chattogram">Chattogram</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Khulna">Khulna</option>
+                    <option value="Sylhet">Sylhet</option>
+                    <option value="Rangamati">Rangamati</option>
+                    <option value="Cox's Bazar">Cox's Bazar</option>
+                    <option value="Bandarban">Bandarban</option>
+                    <option value="Khagrachari">Khagrachari</option>
+                    <option value="Cumilla">Cumilla</option>
+                    <option value="Noakhali">Noakhali</option>
+                    <option value="Patuakhali">Patuakhali</option>
+                    <option value="Naogaon">Naogaon</option>
+                    <option value="Narayanganj">Narayanganj</option>
+                    <option value="Bagerhat">Bagerhat</option>
+                    <option value="Sunamganj">Sunamganj</option>
+                    <option value="Moulvibazar">Moulvibazar</option>
+                    <option value="Dinajpur">Dinajpur</option>
+                    <option value="Kushtia">Kushtia</option>
+                    <option value="Pabna">Pabna</option>
+                    <option value="Meherpur">Meherpur</option>
+                    <option value="Madaripur">Madaripur</option>
+                  </select>
+                </label>
+                <label>Travelers <input type="number" id="budgetTravelers" min="1" value="2"></label>
+                <label>Nights <input type="number" id="budgetNights" min="1" value="2"></label>
+                <label>Guide Days <input type="number" id="budgetGuideDays" min="0" value="1"></label>
+                <label>Transport
+                  <select id="budgetTransport">
+                    <option value="bus">Bus</option>
+                    <option value="train">Train</option>
+                    <option value="launch">Launch</option>
+                    <option value="air">Air</option>
+                  </select>
+                </label>
+                <label>Hotel Tier
+                  <select id="budgetHotelTier">
+                    <option value="budget">Budget</option>
+                    <option value="standard">Standard</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </label>
+              </div>
+              <div class="budget-actions"><button type="button" class="button primary" onclick="calculateBudget()">Calculate Budget</button></div>
+              <div class="budget-result" id="budgetResult">Select a destination to see estimate.</div>
+            </div>
+
+            <div class="tab-navigation">
+              <button class="tab-button active" onclick="showTab('weather', this)">🌤️ Weather</button>
+              <button class="tab-button" onclick="showTab('map', this)">🗺️ Map</button>
+              <button class="tab-button" onclick="showTab('route', this)">🚌 Route</button>
+              <button class="tab-button" onclick="showTab('hotel', this)">🏨 Hotel</button>
+              <button class="tab-button" onclick="showTab('reviews', this)">⭐ Reviews</button>
+            </div>
+
+            <div class="tab-content">
+              <div id="weather-tab" class="tab-pane active">
+                <div class="weather-display">
+                  <div class="weather-icon" id="tabWeatherIcon">🌤️</div>
+                  <div class="weather-details">
+                    <div class="weather-temp" id="tabWeatherTemp">--°C</div>
+                    <div class="weather-desc" id="tabWeatherDesc">Select a spot</div>
+                  </div>
+                </div>
+              </div>
+              <div id="map-tab" class="tab-pane"><div id="mapContainer" class="map-container">Select a destination to view map</div></div>
+              <div id="route-tab" class="tab-pane"><div id="routeOptions"></div></div>
+              <div id="hotel-tab" class="tab-pane">
+                <div class="hotel-section">
+                  <h4>Find Accommodations</h4>
+                  <div class="booking-form" style="display:grid; gap:10px; margin-bottom:20px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                      <input type="date" id="hotelCheckin" class="modal-input">
+                      <input type="date" id="hotelCheckout" class="modal-input">
+                    </div>
+                    <button class="button primary" onclick="searchHotels()">Search Hotels</button>
+                  </div>
+                  <div id="hotelResultsList"></div>
+
+                  <div class="booking-portals" style="margin-top:24px;">
+                    <h5>Direct Booking Portals</h5>
+                    <div class="booking-buttons">
+                      <a href="https://hotel.com.bd" target="_blank" class="button secondary booking-btn">Hotel.com.bd</a>
+                      <a href="https://gozayan.com/hotel" target="_blank" class="button secondary booking-btn">GoZayan</a>
+                      <a href="https://careflybd.com/hotel-booking/" target="_blank" class="button secondary booking-btn">Boknow</a>
+                      <a href="https://hotels.gov.bd" target="_blank" class="button secondary booking-btn">Parjatan (Official)</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="reviews-tab" class="tab-pane"><div id="spotReviewsList">No reviews yet.</div></div>
+            </div>
+
+            <div class="result-actions">
+              <a class="button primary" id="resultDetailsLink" href="#">View Full Details</a>
+              <button class="button secondary" type="button" onclick="focusSearch()">Search Another</button>
+              <button class="button secondary" type="button" onclick="jumpToTop()">Back To Top</button>
+            </div>
+          </div>
+
+        </article>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <header class="faq-head">
+          <div>
+            <h2>FAQ - Frequently Asked Questions</h2>
+            <p>Find answers to common questions about Bangladesh tourism, travel planning, and this platform.</p>
+          </div>
+          <a class="button primary" id="faqStartBtn" href="#discover">Start Exploring</a>
+        </header>
+
+        <div class="faq-list" id="faqList">
+          <details class="faq-item" open>
+            <summary>What is the best time to visit Bangladesh?</summary>
+            <p>The best time is usually from November to February when the weather is cooler and more comfortable for travel.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do I need a visa to visit Bangladesh?</summary>
+            <p>Most international travelers need a visa. Please check the latest Bangladesh embassy rules for your country before traveling.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What are the must-visit destinations in Bangladesh?</summary>
+            <p>Popular places include Cox's Bazar, Sundarbans, Sajek Valley, Bandarban, Sylhet, and historical landmarks in Dhaka.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is Bangladesh safe for tourists?</summary>
+            <p>Most tourist areas are generally safe with normal travel precautions. Follow local guidance and avoid isolated travel late at night.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How can I travel between cities in Bangladesh?</summary>
+            <p>You can use bus, train, domestic flights, and launch services depending on the route and your budget.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I book hotels and transport from here?</summary>
+            <p>Yes. Use the destination details page to find direct booking links for hotels and transport services.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" id="topReviewsSection" style="margin-top:40px;">
+        <div class="section-heading">
+          <h2>⭐ Top Reviews</h2>
+          <p>What our 5-star travelers are saying about their experiences.</p>
+        </div>
+        <div id="homeReviewsList" class="reviews-scroll-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <section class="contact-section" id="contactInfo">
+        <div>
+          <h3>About Us</h3>
+          <p>Bangladesh Tourism Explorer helps travelers discover top places with weather, guides, and booking support.</p>
+        </div>
+        <div>
+          <h3>Contact Us</h3>
+          <p>Email: info@bdtourism.com</p>
+          <p>Phone: +880 1234-567890</p>
+          <p>Address: Dhaka, Bangladesh</p>
+        </div>
+      </section>
+
+      <section class="connect-section" id="connect">
+        <div class="connect-container">
+          <h3>Connect with Us</h3>
+          <div class="social-links">
+            <a href="https://wa.me/+8801234567890" target="_blank" class="social-icon whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://facebook.com/bdtourism" target="_blank" class="social-icon facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://instagram.com/bdtourism" target="_blank" class="social-icon instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com/company/bdtourism" target="_blank" class="social-icon linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="mailto:info@bdtourism.com" class="social-icon email" title="Email"><i class="fas fa-envelope"></i></a>
+          </div>
+          <p class="copyright">&copy; 2026 Bangladesh Tourism Explorer. All rights reserved.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="auth-modal" id="authModal" aria-hidden="true">
+    <div class="auth-modal-backdrop" data-auth-close></div>
+    <section class="auth-modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" type="button" data-auth-close aria-label="Close authentication panel">×</button>
+      <div class="auth-hero">
+        <p class="auth-kicker">Member access</p>
+        <h2 id="authTitle">Login or create your account</h2>
+        <p>Use your email to get a verification code first, then set your password after the code is confirmed.</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+        <button class="auth-tab active" type="button" data-auth-mode="login">Login</button>
+        <button class="auth-tab" type="button" data-auth-mode="signup">Create Account</button>
+      </div>
+
+      <div class="auth-message" id="authMessage" aria-live="polite"></div>
+
+      <form class="auth-panel" id="loginForm" novalidate>
+        <label>
+          <span>Email</span>
+          <input type="email" id="loginEmail" autocomplete="email" placeholder="you@example.com" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter your password" required>
+        </label>
+        <button class="button primary auth-submit" type="submit">Login</button>
+      </form>
+
+      <form class="auth-panel hidden" id="signupForm" novalidate>
+        <div class="auth-step" data-step="details">
+          <label>
+            <span>Full name</span>
+            <input type="text" id="signupName" autocomplete="name" placeholder="Your name" required>
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" id="signupEmail" autocomplete="email" placeholder="you@example.com" required>
+          </label>
+          <button class="button primary auth-submit" type="button" id="sendCodeBtn">Send verification code</button>
+        </div>
+
+        <div class="auth-step hidden" data-step="code">
+          <label>
+            <span>Verification code</span>
+            <input type="text" id="verificationCode" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code">
+          </label>
+          <div class="auth-inline-actions">
+            <button class="button primary auth-submit" type="button" id="verifyCodeBtn">Verify code</button>
+            <button class="button secondary" type="button" id="resendCodeBtn">Resend</button>
+            <button class="button secondary" type="button" id="startOverBtn">Change Email</button>
+          </div>
+        </div>
+
+        <div class="auth-step hidden" data-step="password">
+          <label>
+            <span>Create password</span>
+            <input type="password" id="signupPassword" autocomplete="new-password" placeholder="Minimum 6 characters">
+          </label>
+          <label>
+            <span>Confirm password</span>
+            <input type="password" id="signupPasswordConfirm" autocomplete="new-password" placeholder="Re-enter your password">
+          </label>
+          <button class="button primary auth-submit" type="button" id="setPasswordBtn">Create account</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/leaflet.markercluster.min.js"></script>
+  <!-- Google Maps JS API: replace YOUR_API_KEY with your API key (enable Maps JS API + billing) -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8aCnXAxDmrcw_nDP8kwa15qS7Yrv_QII&callback=onGoogleMapsApiLoaded"></script>
+  <script src="script.js?v=20260515"></script>
+  <script src="auth.js?v=20260515"></script>
+</body>
+</html>
