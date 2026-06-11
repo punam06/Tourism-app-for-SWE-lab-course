@@ -1,11 +1,13 @@
-version: '3.8'
+version: '3.8' # Docker Compose syntax version
 
 services:
+  # The Node.js Application Service
   app:
-    build: .
+    build: . # Build the image using the Dockerfile in the current directory
     ports:
-      - "3000:3000"
+      - "3000:3000" # Map host port 3000 to container port 3000
     environment:
+      # Database connection settings
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=rootpass
@@ -13,27 +15,35 @@ services:
       - PORT=3000
     depends_on:
       db:
+        # Wait until the database container is completely ready before starting the app
         condition: service_healthy
     volumes:
+      # Map the upload directory so images persist across container restarts
       - spot-pictures:/app/frontend/src/assets/spot-pictures
-    restart: unless-stopped
+    restart: unless-stopped # Automatically restart unless manually stopped
 
+  # The MySQL Database Service
   db:
-    image: mysql:8.0
+    image: mysql:8.0 # Use official MySQL 8 image
     environment:
+      # Set up default root password and database name
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: torisom_db
     ports:
-      - "3306:3306"
+      - "3306:3306" # Map MySQL default port for local debugging
     volumes:
+      # Persist database files to a Docker volume
       - mysql-data:/var/lib/mysql
+      # Inject the SQL schema script to run automatically on first start
       - ./backend/src/database/database.sql:/docker-entrypoint-initdb.d/database.sql
     healthcheck:
+      # Custom healthcheck to confirm MySQL is actually accepting connections
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 10
-    restart: unless-stopped
+    restart: unless-stopped # Automatically restart unless manually stopped
 
 volumes:
+  # Define named volumes for persistent storage
   mysql-data:
   spot-pictures:

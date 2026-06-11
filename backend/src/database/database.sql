@@ -1,3 +1,8 @@
+-- =========================================================================
+-- Tourism App Database Schema and Initial Dump
+-- This file defines the structure for all necessary tables including users,
+-- bookings, spots, guides, etc. It runs automatically in Docker via entrypoint.
+-- =========================================================================
 -- MySQL dump 10.13  Distrib 9.5.0, for macos26.0 (arm64)
 --
 -- Host: localhost    Database: torisom_db
