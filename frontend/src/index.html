@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarReach — Bangladesh Tourism Explorer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, var(--bg-color));
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 5%;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        h1 {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 span {
+            color: var(--primary);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .stat-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            min-width: 150px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite alternate;
+        }
+        
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #0ea5e9;
+            top: -100px;
+            left: -100px;
+        }
+        
+        .shape-2 {
+            width: 500px;
+            height: 500px;
+            background: #6366f1;
+            bottom: -200px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <header>
+        <div class="logo">FarReach</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <a href="/user-dashboard">User Dashboard</a>
+            <a href="/admin-dashboard">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero-content">
+            <h1>Discover the Hidden Gems of <span>Bangladesh</span></h1>
+            <p class="subtitle">Explore breathtaking landscapes, vibrant culture, and historical landmarks. Your ultimate companion for discovering the beauty of Bangladesh seamlessly.</p>
+            <a href="/user-dashboard" class="btn" style="font-size: 1.2rem; padding: 1rem 2.5rem;">Start Exploring</a>
+
+            <div class="stats-container" id="stats-container">
+                <!-- Stats dynamically loaded -->
+                <div class="stat-box"><div class="stat-number">100+</div><div>Spots</div></div>
+                <div class="stat-box"><div class="stat-number">64</div><div>Districts</div></div>
+                <div class="stat-box"><div class="stat-number">8</div><div>Divisions</div></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/client-config.js"></script>
+    <script>
+        // Fetch stats from API to make it dynamic
+        fetch(`${window.APP_API_BASE_URL}/api/site-content`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.stats) {
+                    const container = document.getElementById('stats-container');
+                    container.innerHTML = `
+                        <div class="stat-box"><div class="stat-number">${data.stats.spots}+</div><div>Destinations</div></div>
+                        <div class="stat-box"><div class="stat-number">${data.stats.districts}</div><div>Districts</div></div>
+                        <div class="stat-box"><div class="stat-number">${data.stats.divisions}</div><div>Divisions</div></div>
+                    `;
+                }
+            })
+            .catch(err => console.error('Failed to load stats:', err));
+    </script>
+</body>
+</html>
