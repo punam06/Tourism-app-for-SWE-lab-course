@@ -1,3 +1,7 @@
+/**
+ * @file api.test.js
+ * @description Automated tests for the backend API endpoints.
+ */
 const request = require('supertest');
 const app = require('../app');
 

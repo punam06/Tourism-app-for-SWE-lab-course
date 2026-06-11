@@ -1,3 +1,7 @@
+/**
+ * @file run-seed.js
+ * @description Standalone script to execute the database seeding process.
+ */
 const seed = require('./seed');
 const db = require('../config/db');
 

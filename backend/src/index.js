@@ -1,3 +1,7 @@
+/**
+ * @file index.js
+ * @description Entry point for the FarReach application. Starts the Express server.
+ */
 const app = require('./app');
 
 const PORT = process.env.PORT || 3000;

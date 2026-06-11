@@ -1,3 +1,7 @@
+/**
+ * @file seed.js
+ * @description Database seeder. Populates divisions, districts, spots, and guides data.
+ */
 const db = require('../config/db');
 
 const spotsData = [

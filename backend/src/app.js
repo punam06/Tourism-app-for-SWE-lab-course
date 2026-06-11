@@ -1,3 +1,8 @@
+/**
+ * @file app.js
+ * @description Main application file for the FarReach Tourism App backend.
+ * Configures Express, middleware, routing, authentication, and API endpoints.
+ */
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
