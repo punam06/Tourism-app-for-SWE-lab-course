@@ -46,6 +46,17 @@ npm start
 └── LICENSE               # MIT License
 ```
 
+## Backend Architecture & Modules Explanation
+
+The backend of the FarReach application is built modularly using Node.js and Express. Here is a breakdown of the key components:
+
+- **`index.js`**: The main entry point that starts the Express server. It handles port binding and triggers the initial database seeding script upon startup.
+- **`app.js`**: Contains the core application logic. It configures the Express server, sets up middleware (like CORS and body parsers), and defines all the API routes (authentication, weather, geocoding, hotels, reviews, admin management, and user dashboard).
+- **`config/db.js`**: Manages the database connection pool using `mysql2/promise`. It establishes a robust, reusable connection to the MySQL database.
+- **`database/seed.js`**: Contains the database population logic. It dynamically inserts initial data such as geographical divisions, districts, specific tourist spots, and guides to ensure the application works out-of-the-box.
+- **`database/run-seed.js`**: A standalone script that can be executed directly from the terminal to manually trigger the database seeding process without starting the full Express server.
+- **`__tests__/api.test.js`**: Houses the automated integration tests using `supertest`. It validates the functionality and responses of critical API endpoints to ensure system stability.
+
 ## License
 
 MIT License — see [LICENSE](LICENSE).
